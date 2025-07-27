@@ -4,39 +4,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crie sua Tarefa</title>
-    <!-- do css tailwind -->
+    <title>Tarefas</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+     <script>
+      tailwind.config = {
+        darkMode: 'class', // Habilita o modo escuro baseado em classe, o toglle do tailwind
+      }
+    </script>
 </head>
 
 <body class="bg-black/5">
-
-    <header class="bg-white shadow-lg flex justify-between items-center px-[60px] py-4">
-        <div class="flex items-center gap-[70px]">
-            <h1 class="font-bold text-[26px]">Tarefas</h1>
-            <input class="bg-black/5 w-[500px] h-[46px] rounded pl-4" type="text" placeholder="Pesquisar">
+    <!-- cabeçalho -->
+    <header id="header"
+        class="bg-white shadow-lg flex justify-between items-center px-4 md:px-[60px] py-4 duration-150">
+        <div class="flex flex-col md:flex-row items-center gap-[70px]">
+            <h1 id= "header-title" class="font-bold text-[26px]">Tarefas</h1>
+            <!-- inputdepesquisa -->
+            <input id="search-input"
+            
+             class="hidden w-full bg-black/5 md:w-[500px] h-[46px] rounded pl-4" type="text" placeholder="Pesquisar">
         </div>
-        <box-icon name='moon' type='solid'></box-icon>
+  <div class="flex items-center gap-4">
+    <box-icon name='search' class="md:hidden" onclick="mostrarInput()"></box-icon>
+    <box-icon type='solid' name='moon' class="duration-150" onclick="mudarTema()"></box-icon>
+</div>
     </header>
-
-    <div class="px-[60px] pt-[60px]">
-        <div class=" flex justify-between items-center">
-            <h2 class="font-bold text-[36px] text-black/50">Tarefas</h2>
-            <button
+    <!-- conteudoprincipal -->
+    <div class="px-4 md:px-[60px] pt-[60px]">
+        <div class="flex justify-between items-center">
+            <h2 class="font-bold text-2xl md:text-[36px] text-black/50">Tarefas</h2>
+            <button onclick="abrirGaveta()"
                 class="h-[46px] flex gap-4 items-center bg-black rounded px-4 text-white fill-white uppercase font-bold text-[12px]">
-                <box-icon name='plus-circle'></box-icon>
+                <box-icon type='solid' name='plus-circle'></box-icon>
                 Nova tarefa
             </button>
         </div>
+        <!-- grid -->
+        <div id="lista-de-tarefas" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8"></div>
+    </div>
 
-        <div id="lista-de-tarefas">
-            
-        </div>
+    <!-- gaveta -->
+    <div id="sombra" onclick="fecharGaveta()"
+        class="w-full h-screen bg-black/90 fixed top-0 left-0 duration-150 invisible opacity-0"></div>
+    <div id="gaveta" class="w-[90%] sm:w-[400px] h-screen bg-white p-4 fixed top-0 right-0 duration-150 invisible opacity-0">
+        <h3 class="flex justify-between items-center text-[20px] font-bold">
+            Cadastrar
+            <box-icon name='x' onclick="fecharGaveta()"></box-icon>
+        </h3>
     </div>
 
 
-    <!-- do boxicons -->
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <script src="js/index.js"></script>
 </body>
 
 </html>

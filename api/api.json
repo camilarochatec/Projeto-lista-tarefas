@@ -1,0 +1,16 @@
+{
+    "tarefas": [
+        {
+            "id": "1",
+            "titulo": "Deixar a esposa no trabalho",
+            "descricao": "Levar até o WSTC",
+            "data": "2025-07-21"
+        },
+        {
+            "id": "2",
+            "titulo": "Passear com a cachorra",
+            "descricao": "levar até a esquina",
+            "data": "2025-07-21"
+        }
+    ]
+}
