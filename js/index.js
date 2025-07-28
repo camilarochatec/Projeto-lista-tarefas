@@ -1,62 +1,85 @@
-// Função para alternar o tema e salvar a preferência
-function mudarTema() {
-    document.documentElement.classList.toggle('dark');
-
-    if (document.documentElement.classList.contains('dark')) {
-        localStorage.setItem('theme', 'dark');
-    } else {
-        localStorage.setItem('theme', 'light');
+function mudarTema(){
+    const header = document.querySelector("#header");
+    if(header.classList.contains("bg-white")){
+        header.classList.remove("bg-white", "text-black", "fill-black");
+        header.classList.add("bg-black", "text-white", "fill-white");
+    }else{
+        header.classList.remove("bg-black", "text-white", "fill-white");
+        header.classList.add("bg-white", "text-black", "fill-black");
     }
 }
 
-// Funções da gaveta (sem alterações)
-function abrirGaveta() {
+function abrirGaveta(){
     const sombra = document.querySelector("#sombra");
     const gaveta = document.querySelector("#gaveta");
+
     sombra.classList.remove("invisible", "opacity-0");
     gaveta.classList.remove("invisible", "opacity-0");
 }
 
-function fecharGaveta() {
+function fecharGaveta(){
     const sombra = document.querySelector("#sombra");
     const gaveta = document.querySelector("#gaveta");
+
     sombra.classList.add("invisible", "opacity-0");
     gaveta.classList.add("invisible", "opacity-0");
 }
 
-// Função para carregar tarefas que respeita o dark mode
-function carregarTarefas(tarefas) {
-    const listaDeTarefas = document.querySelector("#lista-de-tarefas");
-    listaDeTarefas.innerHTML = ""; // Limpa a lista antes de adicionar
+function buscarTarefas(){
+    fetch("http://localhost:8000/tarefas")
+    .then(resposta => resposta.json())
+    .then(json => {
+        carregarTarefas(json);
+    })
+}
 
-    const tarefasHtml = tarefas.map(tarefa => {
-        // O HTML do card já tem as classes dark: então não precisa de lógica aqui
-        return `
-            <div class="bg-white dark:bg-gray-800 shadow rounded p-4 border border-gray-200 dark:border-gray-700">
-                <h3 class="font-bold text-gray-800 dark:text-white">${tarefa.titulo}</h3>
-                <p class="text-[14px] text-gray-500 dark:text-gray-400 line-clamp-3 mb-4">${tarefa.descricao}</p>
+buscarTarefas()
+
+function carregarTarefas(tarefas){
+    const listaDeTarefas = document.querySelector("#lista-de-tarefas");
+    tarefas.map(tarefa => {
+        listaDeTarefas.innerHTML += `
+            <div class="bg-white shadow rounded p-4">
+                <h3 class="font-bold">${tarefa.titulo}</h3>
+                <p class="text-[14px] text-gray-500 line-clamp-3 mb-4">${tarefa.descricao}</p>
                 <div class="flex justify-between items-center">
-                    <span class="font-bold text-[10px] text-gray-400 dark:text-gray-500">${tarefa.data}</span>
-                    <div class="flex gap-3 fill-gray-600 dark:fill-gray-400">
-                        <box-icon name='pencil'></box-icon>
-                        <box-icon name='trash'></box-icon>
+                    <span class="font-bold text-[10px]">${tarefa.data}</span>
+                    <div class="flex gap-3">
+                        <box-icon name='pencil' ></box-icon>
+                        <box-icon name='trash' onclick="deletarTarefa(${tarefa.id})"></box-icon>
                     </div>
                 </div>
             </div>
         `;
-    }).join('');
-
-    listaDeTarefas.innerHTML = tarefasHtml;
+    })
 }
 
-// Função para buscar os dados (sem alterações)
-function buscarTarefas() {
-    fetch("http://localhost:3000/tarefas")
-        .then(resposta => resposta.json())
-        .then(json => {
-            carregarTarefas(json);
-        });
+function criarTarefa(){
+    event.preventDefault();
+    fetch("http://localhost:8000/tarefas",{
+        method: "post",
+        headers:{
+            "Content-type": "application/json"
+        },
+        body: JSON.stringify(capturarDados("#formCriar"))
+    })
 }
 
-// Inicia a busca de tarefas ao carregar a página
-buscarTarefas();
+//fazer o de editar
+
+//fazer de deletar
+function deletarTarefa(idDaTarefa){
+    event.preventDefault();
+    fetch(`http://localhost:8000/tarefas/${idDaTarefa}`,{
+        method: "delete",
+
+    })
+}
+
+
+function capturarDados(idDeUmFormulario){
+    let form = document.querySelector(idDeUmFormulario);
+    let formData = new FormData(form);
+    let dados = Object.fromEntries(formData.entries())
+    return dados;
+}
