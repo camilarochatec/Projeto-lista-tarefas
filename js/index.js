@@ -44,7 +44,7 @@ function carregarTarefas(tarefas) {
                 <h3 class="font-bold">${tarefa.titulo}</h3>
                 <p class="text-[14px] text-gray-500 line-clamp-3 mb-4">${tarefa.descricao}</p>
                 <div class="flex justify-between items-center">
-                    <span class="font-bold text-[10px]">${tarefa.data}</span>
+                    <span class="font-bold text-[10px]">${formatarData(tarefa.data)}</span>
                     <div class="flex gap-3">
                         <box-icon name='pencil' onclick="prepararFormularioParaEditar(${tarefa.id})"></box-icon>
                         <box-icon name='trash' onclick="deletarTarefa(${tarefa.id})"></box-icon>
@@ -87,6 +87,7 @@ function salvarTarefa(event) {
 }
 
 //para fazer o editar primeiro tem q buscar os dados 
+//função assincrona é algo q sai da pilha de execuç. muito importante em awaits e apis. para q continue as minhas tarefas.
 async function prepararFormularioParaEditar(idDaTarefa) {
     // 1. Busca os dados da tarefa específica na API
     const resposta = await fetch(`http://localhost:8000/tarefas/${idDaTarefa}`);
@@ -104,33 +105,32 @@ async function prepararFormularioParaEditar(idDaTarefa) {
     abrirGaveta();
 }
 
-//NÃO ESTOU USANDO!
-// function editarTarefa(idDaTarefa){
-//     event.preventDefault();
-//     fetch(`http://localhost:8000/tarefas/${idDaTarefa}`,{
-//         method: "put",
-//         headers:{
-//             "Content-type": "application/json"
-//         },
-//         body: JSON.stringify(capturarDados("#formCriar"))
-//     })
-// }
-
-
 function deletarTarefa(idDaTarefa) {
     event.preventDefault();
-    fetch(`http://localhost:8000/tarefas/${idDaTarefa}`, {
+    let confirmou = confirm("Deseja realmente deletar esta tarefa?");
+    if(confirmou){
+        fetch(`http://localhost:8000/tarefas/${idDaTarefa}`, {
         method: "delete",
         // para atualizar a tela
     }).then(() => {
         buscarTarefas();
     })
+    }
 }
-
 
 function capturarDados(idDeUmFormulario) {
     let form = document.querySelector(idDeUmFormulario);
     let formData = new FormData(form);
-    let dados = Object.fromEntries(formData.entries())
+    let dados = Object.fromEntries(formData.entries());
+    let data = new Date();
+    dados.data = data.toLocaleDateString().split('/').reverse().join('-');
     return dados;
 }
+
+function formatarData(data){
+    let dataFormatada = new Date(data);
+    return dataFormatada.toLocaleDateString();
+}
+// -----------------------------------------------------------------------------
+//obs.: não esqueça de colocar no html o novo form e chamar a função.
+// modo de fazer a)

@@ -1,19 +1,28 @@
 {
   "tarefas": [
     {
-      "titulo": "estudar 2 módulos da matéria",
-      "descricao": "matemática e geografia",
+      "titulo": "dentista",
+      "descricao": "Ir ao dentista 15hrs",
+      "data": "2025-08-04",
       "id": 1
     },
     {
-      "titulo": "fazer exercício",
-      "descricao": "ir na academia ás 7 da manhã e depois caminhar na orla",
+      "titulo": "academia",
+      "descricao": "ir a academia segunda-feira",
+      "data": "2025-08-04",
       "id": 2
     },
     {
-      "titulo": "dentista",
-      "descricao": "IR AO DENTISTA",
+      "titulo": "estudar para prova",
+      "descricao": "módulo 1 e 2",
+      "data": "2025-08-04",
       "id": 3
+    },
+    {
+      "titulo": "teste novo",
+      "descricao": "teste 123",
+      "data": "2025-08-04",
+      "id": 4
     }
   ]
 }

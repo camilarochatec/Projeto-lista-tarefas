@@ -82,3 +82,7 @@ Este é o processo mais direto.
 > }
 > ```
 
+//é importante fazer o npm run dev para mocagem. mocagem é uma simulaçao de pacote de dados. json server simula uma api. uma simulaçao de banco de dados. npm run dev estamos chamando o api. npm run dev é um "apelido" que criamos em package.json para esse comando funcionar "npx json-server ./api/api.json --watch --port 8000".
+existem funcçoes de tipo e funcçoes estaticas nativa do js. as funcoes de tipo so funciona para um tipo, para arrys tem funcçoews nartivas para arrays. mas as estaticas.
+as superclasses sempre começa com letra maiuscula e usamos new na frente. mas o new é opcional. vai depender do seu objetivo.
+
