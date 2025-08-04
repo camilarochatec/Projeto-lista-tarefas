@@ -1,20 +1,18 @@
 {
   "tarefas": [
     {
-      "id": 1,
-      "titulo": "Deixar a esposa no trabalho",
-      "descricao": "Levar até o WSTC",
-      "data": "2025-07-21"
+      "titulo": "estudar 2 módulos da matéria",
+      "descricao": "matemática e geografia",
+      "id": 1
     },
     {
-      "id": 2,
-      "titulo": "Passear com a cachorra",
-      "descricao": "levar até a esquina",
-      "data": "2025-07-21"
+      "titulo": "fazer exercício",
+      "descricao": "ir na academia ás 7 da manhã e depois caminhar na orla",
+      "id": 2
     },
     {
-      "titulo": "teste",
-      "descricao": "teste",
+      "titulo": "dentista",
+      "descricao": "IR AO DENTISTA",
       "id": 3
     }
   ]
