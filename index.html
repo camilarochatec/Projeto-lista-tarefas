@@ -1,45 +1,55 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<!-- aqui colocamos o dark do tailwind, precisamos botar o id root e a class dark -->
+<html lang="pt-BR" id="root" class="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tarefas</title>
+    <!-- colocamos o tailwind via cdn -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-     <script>
-      tailwind.config = {
-        darkMode: 'class', // Habilita o modo escuro baseado em classe, o toglle do tailwind
-      }
-    </script>
+    <!-- aqui colocamos o dark do tailwind propriamente dito -->
+    <style type="text/tailwindcss">
+        @custom-variant dark (&:where(.dark, .dark *));
+        /* @theme{
+            --color-verde: #7CFFB0; para incluir variantes de cor que vc queira criar
+        } */
+    </style>
 </head>
 
-<body class="bg-black/5">
+<!-- aqui escrevemos quando estiver no modo dark as cores que queremos mudar -->
+
+<body class="bg-black/5 dark:bg-black/95 duration-150 min-h-screen">
+
     <!-- cabeçalho -->
     <header id="header"
-        class="bg-white shadow-lg flex justify-between items-center px-4 md:px-[60px] py-4 duration-150">
+        class="bg-white shadow-lg dark:bg-black dark:shadow-slate-900 flex justify-between items-center px-4 md:px-[60px] py-4 duration-150">
         <div class="flex flex-col md:flex-row items-center gap-[70px]">
-            <h1 id= "header-title" class="font-bold text-[26px]">Tarefas</h1>
+            <h1 id="header-title" class="font-bold text-[26px] dark:text-slate-300">Tarefas</h1>
 
             <!-- inputdepesquisa apenas no mobile (falta terminar) -->
-            <input id="search-input"
-             class="hidden w-full bg-black/5 md:w-[500px] h-[46px] rounded pl-4" type="text" placeholder="Pesquisar">
+            <input onkeyup="pesquisar(event.target.value)" id="search-input"
+                class="hidden md:block w-full bg-black/5 md:w-[500px] h-[46px] rounded pl-4 dark:border-2 border-slate-400 dark:text-white"
+                type="text" placeholder="Pesquisar" onblur="esconderInput()">
         </div>
         <!-- os icones da lupa e lua falta terminar funcionar -->
-  <div class="flex items-center gap-4">
-    <box-icon name='search' class="md:hidden" onclick="mostrarInput()"></box-icon>
-    <box-icon type='solid' name='moon' class="duration-150" onclick="mudarTema()"></box-icon>
-</div>
+        <div class="flex items-center gap-4">
+            <box-icon name='search' class="md:hidden dark:fill-slate-400" onclick="mostrarInput()"></box-icon>
+            <box-icon type='solid' name='moon' class="duration-150 dark:hidden" onclick="mudarTema()"></box-icon>
+            <box-icon type='solid' name='sun' class="fill-slate-400 duration-150 hidden dark:block"
+                onclick="mudarTema()"></box-icon>
+        </div>
     </header>
 
     <!-- conteudoprincipal -->
     <div class="px-4 md:px-[60px] pt-[60px]">
         <div class="flex justify-between items-center">
-            <h2 class="font-bold text-2xl md:text-[36px] text-black/50">Tarefas</h2>
+            <h2 class="font-bold text-2xl md:text-[36px] text-black/50  dark:text-slate-100">Lista de tarefas</h2>
+            
             <!-- gaveta aberta, quando clica -->
             <button onclick="abrirGaveta()"
-                class="h-[46px] flex gap-4 items-center bg-black rounded px-4 text-white fill-white uppercase font-bold text-[12px]">
-                <box-icon type='solid' name='plus-circle'></box-icon>
+                class="h-[46px] flex gap-4 items-center bg-black dark:bg-slate-400 text-white dark:text-black duration-150 rounded px-4 fill-black uppercase font-bold text-[12px]">
+                <box-icon type='solid' name='plus-circle' class= " fill-white dark:fill-black duration-150"></box-icon>
                 Nova tarefa
             </button>
         </div>
@@ -47,24 +57,57 @@
         <div id="lista-de-tarefas" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8"></div>
     </div>
 
-    <!-- gaveta fechada -->
+    <!-- gaveta -->
     <div id="sombra" onclick="fecharGaveta()"
         class="w-full h-screen bg-black/90 fixed top-0 left-0 duration-150 invisible opacity-0"></div>
-    <div id="gaveta" class="w-[90%] sm:w-[400px] h-screen bg-white p-4 fixed top-0 right-0 duration-150 invisible opacity-0">
-        <h3 class="flex justify-between items-center text-[20px] font-bold">
-            Cadastrar
-            <box-icon name='x' onclick="fecharGaveta()"></box-icon>
-        </h3>
+    <div id="gaveta"
+        class="w-[90%] sm:w-[400px] h-screen bg-white dark:bg-slate-800 dark:text-white p-4 fixed top-0 right-0 duration-150 invisible opacity-0">
 
-        <!-- conteúdodagaveta -->
-        <form id="formCriar" onsubmit="salvarTarefa(event)">
-            <label for="titulo" class="block mb-1 font-bold">Título</label>
-            <input id="titulo" name="titulo" class="w-full h-[40px] mb-3 pl-3  border-2 border-slate-300 focus:border-black rounded" type="text" placeholder="Digite um título">
+        <!-- formulario de criar -->
+        <form id="formCriar" onsubmit="criarTarefa(event)">
+            <!-- cabeçalho da gaveta -->
+            <h3 class="flex justify-between items-center text-[20px] font-bold">
+                Cadastrar
+                <box-icon name='x' onclick="fecharGaveta()"></box-icon>
+            </h3>
+            
+            <!-- conteúdo da gaveta criar -->
+            <label for="titulo" class="block mb-1 font-bold">Titulo</label>
+            <input id="titulo" name="titulo"
+                class="w-full h-[40px] mb-3 pl-3 border-2 border-slate-300 focus:border-black rounded" type="text"
+                placeholder="Digite um titulo">
 
             <label for="descricao" class="block mb-1 font-bold">Descrição</label>
-            <textarea id="descricao" name="descricao" class="w-full h-[120px] mb-3 pl-3 border-2 border-slate-300 focus:border-black rounded" placeholder="Digite aqui"></textarea>
+            <textarea id="descricao" name="descricao"
+                class="w-full h-[120px] mb-3 pl-3 border-2 border-slate-300 focus:border-black rounded"></textarea>
 
-            <button type="submit" class="w-full h-[40px] rounded bg-black text-white text-center font-bold cursor-pointer">Criar</button>
+            <button type="submit"
+                class="w-full h-[40px] rounded bg-black dark:bg-slate-400 text-white text-center font-bold cursor-pointer">Criar</button>
+        </form>
+
+        <!-- formulario de editar -->
+        <form id="formEditar" onsubmit="editarTarefa(event)" class="hidden">
+            <!-- cabeçalho da gaveta -->
+            <h3 class="flex justify-between items-center text-[20px] font-bold">
+                Atualizar
+                <box-icon name='x' onclick="fecharGaveta()"></box-icon>
+            </h3>
+
+            <!-- conteúdo da gaveta de editar -->
+            <input type="hidden" name="tarefa_id">
+
+            <label for="titulo" class="block mb-1 font-bold">Título</label>
+            <input id="titulo" name="titulo"
+                class="w-full h-[40px] mb-3 pl-3 border-2 border-slate-300 focus:border-black rounded" type="text"
+                placeholder="Digite um título">
+
+            <label for="descricao" class="block mb-1 font-bold">Descrição</label>
+            <textarea id="descricao" name="descricao"
+                class="w-full h-[120px] mb-3 pl-3 border-2 border-slate-300 focus:border-black rounded"
+                placeholder="Digite aqui"></textarea>
+
+            <button type="submit"
+                class="w-full h-[40px] rounded bg-black text-white text-center font-bold cursor-pointer">Editar</button>
         </form>
     </div>
 

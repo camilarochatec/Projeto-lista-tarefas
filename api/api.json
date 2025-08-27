@@ -1,12 +1,6 @@
 {
   "tarefas": [
     {
-      "titulo": "dentista",
-      "descricao": "Ir ao dentista 15hrs",
-      "data": "2025-08-04",
-      "id": 1
-    },
-    {
       "titulo": "academia",
       "descricao": "ir a academia segunda-feira",
       "data": "2025-08-04",
@@ -19,9 +13,9 @@
       "id": 3
     },
     {
-      "titulo": "teste novo",
-      "descricao": "teste 123",
-      "data": "2025-08-04",
+      "titulo": "estudar capitulo 1",
+      "descricao": "teste",
+      "data": "2025-08-27",
       "id": 4
     }
   ]

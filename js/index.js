@@ -1,19 +1,25 @@
-// falta terminar
+let lista = []
 function mudarTema() {
-    const header = document.querySelector("#header");
-    if (header.classList.contains("bg-white")) {
-        header.classList.remove("bg-white", "text-black", "fill-black");
-        header.classList.add("bg-black", "text-white", "fill-white");
+    const html = document.querySelector("#root");
+    if (html.classList.contains("dark")) {
+        html.classList.remove("dark");
     } else {
-        header.classList.remove("bg-black", "text-white", "fill-white");
-        header.classList.add("bg-white", "text-black", "fill-black");
+        html.classList.add("dark");
     }
 }
 
-function abrirGaveta() {
+function abrirGaveta(editar = false) {
     const sombra = document.querySelector("#sombra");
     const gaveta = document.querySelector("#gaveta");
-
+    const formCriar = document.querySelector("#formCriar");
+    const formEditar = document.querySelector("#formEditar");
+    if (editar) {
+        formCriar.classList.add("hidden");
+        formEditar.classList.remove("hidden");
+    } else {
+        formEditar.classList.add("hidden");
+        formCriar.classList.remove("hidden");
+    }
     sombra.classList.remove("invisible", "opacity-0");
     gaveta.classList.remove("invisible", "opacity-0");
 }
@@ -30,6 +36,7 @@ function buscarTarefas() {
     fetch("http://localhost:8000/tarefas")
         .then(resposta => resposta.json())
         .then(json => {
+            lista = json;
             carregarTarefas(json);
         })
 }
@@ -38,15 +45,16 @@ buscarTarefas();
 
 function carregarTarefas(tarefas) {
     const listaDeTarefas = document.querySelector("#lista-de-tarefas");
+    listaDeTarefas.innerHTML = '';
     tarefas.map(tarefa => {
         listaDeTarefas.innerHTML += `
-            <div class="bg-white shadow rounded p-4">
+            <div class="bg-white shadow rounded p-4 dark:bg-slate-400">
                 <h3 class="font-bold">${tarefa.titulo}</h3>
-                <p class="text-[14px] text-gray-500 line-clamp-3 mb-4">${tarefa.descricao}</p>
+                <p class="text-[14px] text-gray-500 line-clamp-3 mb-4 dark:text-black">${tarefa.descricao}</p>
                 <div class="flex justify-between items-center">
                     <span class="font-bold text-[10px]">${formatarData(tarefa.data)}</span>
                     <div class="flex gap-3">
-                        <box-icon name='pencil' onclick="prepararFormularioParaEditar(${tarefa.id})"></box-icon>
+                        <box-icon name='pencil' onclick="abrirGaveta(true), preencherFormulario(${tarefa.id})"></box-icon>
                         <box-icon name='trash' onclick="deletarTarefa(${tarefa.id})"></box-icon>
                     </div>
                 </div>
@@ -55,82 +63,91 @@ function carregarTarefas(tarefas) {
     })
 }
 
-function salvarTarefa(event) {
-    event.preventDefault(); // Previne o recarregamento da página
+function criarTarefa(event) {
+    event.preventDefault();
 
-    const form = document.querySelector("#formCriar");
-    const id = form.dataset.id; // Pega o ID que guardamos. Será undefined se for uma nova tarefa.
-    const dados = capturarDados("#formCriar");
-
-    if (id) {
-        // Se existe um ID, estamos editando (método PUT)
-        fetch(`http://localhost:8000/tarefas/${id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(dados)
-        }).then(() => {
-            fecharGaveta();
-            buscarTarefas(); // Atualiza a lista na tela
-        });
-
-    } else {
-        // Se não existe um ID, estamos criando (método POST)
-        fetch("http://localhost:8000/tarefas", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(dados)
-        }).then(() => {
-            fecharGaveta();
-            buscarTarefas(); // Atualiza a lista na tela
-        });
-    }
+    fetch("http://localhost:8000/tarefas", {
+        method: "post",
+        headers: {
+            "Content-type": "application/json"
+        },
+        body: JSON.stringify(capturarDados("#formCriar"))
+    })
 }
 
-//para fazer o editar primeiro tem q buscar os dados 
-//função assincrona é algo q sai da pilha de execuç. muito importante em awaits e apis. para q continue as minhas tarefas.
-async function prepararFormularioParaEditar(idDaTarefa) {
-    // 1. Busca os dados da tarefa específica na API
-    const resposta = await fetch(`http://localhost:8000/tarefas/${idDaTarefa}`);
-    const tarefa = await resposta.json();
-
-    // 2. Preenche os campos do formulário com os dados da tarefa
-    document.querySelector("#titulo").value = tarefa.titulo;
-    document.querySelector("#descricao").value = tarefa.descricao;
-
-    // 3. Guarda o ID da tarefa em um lugar que a função de salvar possa ver
-    //    Usaremos o próprio formulário para isso com `data-id`
-    document.querySelector("#formCriar").dataset.id = idDaTarefa;
-
-    // 4. Abre a gaveta para que o usuário possa editar
-    abrirGaveta();
+function editarTarefa(event) {
+    event.preventDefault();
+    const id = document.querySelector("#formEditar input[name='tarefa_id']").value;
+    fetch(`http://localhost:8000/tarefas/${id}`, {
+        method: "put",
+        headers: {
+            "Content-type": "application/json"
+        },
+        body: JSON.stringify(capturarDados("#formEditar"))
+    })
 }
 
 function deletarTarefa(idDaTarefa) {
-    event.preventDefault();
-    let confirmou = confirm("Deseja realmente deletar esta tarefa?");
-    if(confirmou){
+    let confirmou = confirm("Deseja realmente apagar este item?");
+    if (confirmou) {
         fetch(`http://localhost:8000/tarefas/${idDaTarefa}`, {
-        method: "delete",
-        // para atualizar a tela
-    }).then(() => {
-        buscarTarefas();
-    })
+            method: "delete",
+        })
     }
 }
 
 function capturarDados(idDeUmFormulario) {
     let form = document.querySelector(idDeUmFormulario);
     let formData = new FormData(form);
-    let dados = Object.fromEntries(formData.entries());
+    let dados = Object.fromEntries(formData.entries())
     let data = new Date();
     dados.data = data.toLocaleDateString().split('/').reverse().join('-');
     return dados;
 }
 
-function formatarData(data){
+function formatarData(data) {
     let dataFormatada = new Date(data);
     return dataFormatada.toLocaleDateString();
 }
-// -----------------------------------------------------------------------------
-//obs.: não esqueça de colocar no html o novo form e chamar a função.
-// modo de fazer a)
+
+function preencherFormulario(idDaTarefa) {
+    let idValue = document.querySelector("#formEditar input[name='tarefa_id']");
+    let tituloValue = document.querySelector("#formEditar input[name='titulo']");
+    let descricaoValue = document.querySelector("#formEditar textarea[name='descricao']");
+    let tarefa = lista.find(item => item.id == idDaTarefa);
+
+    idValue.value = tarefa.id;
+    tituloValue.value = tarefa.titulo;
+    descricaoValue.value = tarefa.descricao;
+}
+
+function pesquisar(palavra) {
+    let tarefasFiltradas = lista.filter((tarefa) => tarefa.titulo.toLowerCase().includes(palavra.toLowerCase()));
+    carregarTarefas(tarefasFiltradas);
+}
+
+function mostrarInput() {
+    const input = document.getElementById("search-input");
+    const titulo = document.getElementById("header-title");
+    input.classList.remove("hidden");
+    input.focus();
+    if (window.innerWidth < 768) {
+        titulo.classList.add("hidden");
+        input.classList.remove("md:block");
+        input.classList.add("block");
+        input.style.position = "static";
+        input.style.width = "100%";
+    }
+}
+function esconderInput() {
+    const input = document.getElementById("search-input");
+    const titulo = document.getElementById("header-title");
+    if (window.innerWidth < 768) {
+        input.classList.add("hidden");
+        titulo.classList.remove("hidden");
+        input.classList.remove("block");
+        input.classList.add("md:block");
+        input.style.position = "";
+        input.style.width = "";
+    }
+}
