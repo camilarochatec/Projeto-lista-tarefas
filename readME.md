@@ -1,6 +1,3 @@
-https://www.figma.com/design/Li7a6enOrOMSkSB3mlG9In/Refor%C3%A7oDev-ToDo?node-id=1-2&t=G8WcrdMRWliwO6Gg-0
-
-
 Meu sistema funciona com três partes principais:
 
 1.  **HTML (`index.html`):** A estrutura visual da página Contém a `div` (`#lista-de-tarefas`), de css coloquei tipo grid para ficar visualmente interessante. é onde as tarefas aparecem (os quadrinhos criados). No form(`#formCriar`) é o formulário para criar, editar e excluir estas tarefas. o formCriar está dentro da gaveta, que criamos com css e js.
